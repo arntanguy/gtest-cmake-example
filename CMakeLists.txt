@@ -7,7 +7,7 @@ option(test "Build all tests." OFF) # Makes boolean 'test' available.
 set(PROJECT_NAME MyProject)
 project(${PROJECT_NAME})
 
-set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
 
 # If you want your own include/ directory, set this, and then you can do
 # include_directories(${COMMON_INCLUDES}) in other CMakeLists.txt files.
@@ -16,16 +16,15 @@ set(CMAKE_CXX_FLAGS "-g -Wall")
 ################################
 # Normal Libraries & Executables
 ################################
-add_library("${PROJECT_NAME}_lib" "src/project1.cpp")
 file(GLOB SOURCES src/*.cpp)
 list(REMOVE_ITEM SOURCES "src/main.cpp")
-
+add_library("${PROJECT_NAME}_lib" ${SOURCES})
 include_directories ("include")
+
 add_executable(${PROJECT_NAME} src/main.cpp)
 # Key idea: SEPARATE OUT your main() function into its own file so it can be its
 # own executable. Separating out main() means you can add this library to be
 # used elsewhere.
-
 target_link_libraries(${PROJECT_NAME} "${PROJECT_NAME}_lib")
 
 ################################
@@ -48,7 +47,7 @@ if (test)
   add_executable("${PROJECT_NAME}_test" ${TEST_SOURCES})
 
   # Standard linking to gtest stuff.
-  target_link_libraries("${PROJECT_NAME}_test" gtest gtest_main)
+  target_link_libraries("${PROJECT_NAME}_test" gtest)
 
   # Extra linking for the project.
   target_link_libraries("${PROJECT_NAME}_test" "${PROJECT_NAME}_lib")
